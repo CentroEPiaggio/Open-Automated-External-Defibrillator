@@ -1,0 +1,37 @@
+**/Backup/
+**/codegentemp/
+**/Generated_Source/
+**/CortexM3/
+**/Export/
+*.cywrk.*
+*.rpt
+*.svd
+*.html
+*.cyprj.*
+*.mat
+*.txt
+
+# For PCBs designed using KiCad: http://www.kicad-pcb.org/
+
+# Temporary files
+*.000
+*.bak
+*.bck
+*.kicad_pcb-bak
+*~
+_autosave-*
+*.tmp
+
+# Netlist files (exported from Eeschema)
+*.net
+
+# Autorouter files (exported from Pcbnew)
+.dsn
+
+# Exported BOM files
+*.xml
+*.csv
+
+# Cache and Autosave
+*cache*
+*autosave*

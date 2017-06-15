@@ -1,0 +1,139 @@
+initialize:
+    acu(setmod,setmod) dmux(sa,sa) alu(set0) mac(clra)
+    acu(clear,clear) dmux(sa,sa) alu(hold) mac(hold) jmp(eob, channelA)
+
+channelA:
+    acu(hold,hold) dmux(sa,sa) alu(hold) mac(hold) jmp(in1, CHANNELA_INIT)
+
+channelB:
+    acu(hold,hold) dmux(sa,sa) alu(hold) mac(hold) jmp(in2, CHANNELB_INIT)
+
+restart:
+    acu(hold,hold) dmux(sa,sa) alu(hold) mac(hold) jmp(eob, channelA)
+
+
+ChA_init:
+
+acu(setmod, setmod) dmux(sa, sa) alu(hold) mac(hold)
+acu(loadl, loadl) addr(ChA_MIN) dmux(sa, sa) alu(hold) mac(hold)
+acu(loadm, loadm) addr(ChA_MAX) dmux(sa, sa) alu(hold) mac(hold)
+acu(loadf, loadf) addr(ChA_FREG) dmux(sa, sa) alu(hold) mac(hold)
+acu(clear, clear) addr(1) dmux(ba, sa) alu(seta) mac(hold) jmp(eob, ChA_biquad)
+
+ChA_biquad:
+
+acu(write, write) addr(TEMP) dmux(sa, sa) alu(hold) mac(hold)
+acu(read, read) addr(ROUND) dmux(sra, sra) alu(hold) mac(clra)
+acu(read, read) addr(TEMP) dmux(sa, sra) alu(hold) mac(macc)
+acu(incr, incr) dmux(sra, sra) alu(seta) mac(macc)
+acu(hold, hold) dmux(sa, sa) alu(hold) mac(hold)write(da)
+acu(incr, incr) dmux(sra, sra) alu(hold) mac(macc)
+acu(hold, hold) dmux(sa, sa) alu(hold) mac(hold)write(da)
+acu(incr, incr) dmux(sra, sra) alu(hold) mac(macc)
+acu(incr, incr) dmux(sra, sra) alu(hold) mac(macc)
+acu(subf, incr) dmux(srm, srm) alu(add) mac(hold) jmpl(acubeq, ChA_finish)
+
+ChA_finish:
+
+acu(hold, hold) dmux(sa, sa) alu(hold) mac(hold) shift(L, 0)
+acu(incr, hold) addr(1) dmux(sra, sa) alu(seta) mac(hold)write(bus)
+acu(hold, hold) dmux(sra, sra) alu(seta) mac(hold)write(da)
+acu(incr, hold) dmux(sa, sa) alu(hold) mac(hold) write(da) jmp(eob, ChA_EXIT)
+
+area acu
+
+
+ChA_MAX:  dw ChA_LAST, ChA_LAST
+ChA_MIN:  dw ChA_FIRST, ChA_FIRST
+ChA_FREG: dw 0x0202
+
+
+area data_b
+ChA_FIRST: dw  1046111
+dw 15731105
+dw        0
+dw  4174586
+dw        0
+dw  4113525
+dw  8575531
+dw  4113525
+dw  8201685
+dw 12744470
+dw     3238
+dw     6475
+dw     3238
+dw  8175604
+dw 12779751
+dw    20189
+dw    40378
+dw    20189
+dw  7913014
+ChA_LAST: dw 13042860
+
+ChB_init:
+
+acu(setmod, setmod) dmux(sa, sa) alu(hold) mac(hold)
+acu(loadl, loadl) addr(ChB_MIN) dmux(sa, sa) alu(hold) mac(hold)
+acu(loadm, loadm) addr(ChB_MAX) dmux(sa, sa) alu(hold) mac(hold)
+acu(loadf, loadf) addr(ChB_FREG) dmux(sa, sa) alu(hold) mac(hold)
+acu(clear, clear) addr(0) dmux(ba, sa) alu(seta) mac(hold) jmp(eob, ChB_biquad)
+
+ChB_biquad:
+
+acu(write, write) addr(TEMP) dmux(sa, sa) alu(hold) mac(hold)
+acu(read, read) addr(ROUND) dmux(sra, sra) alu(hold) mac(clra)
+acu(read, read) addr(TEMP) dmux(sa, sra) alu(hold) mac(macc)
+acu(incr, incr) dmux(sra, sra) alu(seta) mac(macc)
+acu(hold, hold) dmux(sa, sa) alu(hold) mac(hold)write(da)
+acu(incr, incr) dmux(sra, sra) alu(hold) mac(macc)
+acu(hold, hold) dmux(sa, sa) alu(hold) mac(hold)write(da)
+acu(incr, incr) dmux(sra, sra) alu(hold) mac(macc)
+acu(incr, incr) dmux(sra, sra) alu(hold) mac(macc)
+acu(subf, incr) dmux(srm, srm) alu(add) mac(hold) jmpl(acubeq, ChB_finish)
+
+ChB_finish:
+
+acu(hold, hold) dmux(sa, sa) alu(hold) mac(hold) shift(L, 0)
+acu(incr, hold) addr(0) dmux(sra, sa) alu(seta) mac(hold)write(bus)
+acu(hold, hold) dmux(sra, sra) alu(seta) mac(hold)write(da)
+acu(incr, hold) dmux(sa, sa) alu(hold) mac(hold) write(da) jmp(eob, ChB_EXIT)
+
+area acu
+
+
+ChB_MAX:  dw ChB_LAST, ChB_LAST
+ChB_MIN:  dw ChB_FIRST, ChB_FIRST
+ChB_FREG: dw 0x0202
+
+
+area data_b
+ChB_FIRST: dw  1047745
+dw 14688186
+dw  1047745
+dw  8356444
+dw 12589234
+dw     9013
+dw    18025
+dw     9013
+dw  8109184
+ChB_LAST: dw 12853323
+
+
+area acu
+TEMP: dw 0x7E7E
+ROUND:dw 0x7F7F
+
+area data_a
+org 127
+dw 2048
+
+area data_b
+org 127
+dw 2048
+
+CHANNELA_INIT = ChA_init
+CHANNELB_INIT = ChB_init
+ChA_EXIT = channelB
+ChB_EXIT = channelA
+
+
